@@ -1,0 +1,5 @@
+-r development.txt
+
+gunicorn[gevent]>=23.0,<24
+pyopenssl>=24.0,<25
+

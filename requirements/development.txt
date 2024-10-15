@@ -1,0 +1,5 @@
+Flask>=2.2
+werkzeug>=2
+identity[flask]>=0.9,<1
+python-dotenv<0.22
+pyjwt>=2,<3
