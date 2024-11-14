@@ -1,7 +1,7 @@
 # Deploying to AWS
 
 ## Quick Deploy
-[![Deploy to AWS](https://raw.githubusercontent.com/amazonwebservices/aws-cloudformation-templates/master/aws-logo.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=docsie-ms-auth&templateURL=https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/aws-template.yaml)
+[![Deploy to AWS](https://raw.githubusercontent.com/amazonwebservices/aws-cloudformation-templates/master/aws-logo.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=docsie-ms-auth&templateURL=https://raw.githubusercontent.com/LikaloLLC/secure-deployment-portal/main/aws-template.yaml)
 
 ## Manual Deployment Steps
 

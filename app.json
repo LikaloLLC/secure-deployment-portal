@@ -1,7 +1,7 @@
 {
   "name": "Docsie MS Auth",
   "description": "Microsoft Entra ID authentication for Docsie Secure Portals",
-  "repository": "https://github.com/YOUR_USERNAME/docsie-secure-portals-ms-auth",
+  "repository": "https://github.com/LikaloLLC/secure-deployment-portal",
   "keywords": ["python", "flask", "microsoft", "authentication"],
   "env": {
     "SECRET_KEY": {

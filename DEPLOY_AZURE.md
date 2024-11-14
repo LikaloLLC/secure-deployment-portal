@@ -1,7 +1,7 @@
 # Deploying to Azure
 
 ## Quick Deploy
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FYOUR_USERNAME%2FYOUR_REPO%2Fmain%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FLikaloLLC%2Fsecure-deployment-portal%2Fmain%2Fazuredeploy.json)
 
 ## Manual Deployment Steps
 
@@ -44,7 +44,7 @@
 
 7. **Deploy the Application**
    ```bash
-   az webapp deployment source config --name your-app-name --resource-group your-resource-group --repo-url https://github.com/YOUR_USERNAME/YOUR_REPO --branch main
+   az webapp deployment source config --name your-app-name --resource-group your-resource-group --repo-url https://github.com/LikaloLLC/secure-deployment-portal --branch main
    ```
 
 ## Using Azure Portal

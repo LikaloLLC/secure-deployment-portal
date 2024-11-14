@@ -83,7 +83,7 @@
             "properties": {
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
                 "siteConfig": {
-                    "linuxFxVersion": "DOCKER|YOUR_DOCKER_IMAGE:latest",
+                    "linuxFxVersion": "DOCKER|docker.io/docsie/secure-portal:latest",
                     "appSettings": [
                         {
                             "name": "AZURE_AD_CLIENT_ID",

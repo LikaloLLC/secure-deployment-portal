@@ -71,6 +71,9 @@ Resources:
         - Namespace: aws:elasticbeanstalk:application:environment
           OptionName: SECRET_KEY
           Value: !Sub '${AWS::StackName}-${AWS::Region}-${AWS::AccountId}'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DOCKER_IMAGE
+          Value: docsie/secure-portal:latest
 
   ElasticBeanstalkEnvironment:
     Type: AWS::ElasticBeanstalk::Environment
