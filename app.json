@@ -1,0 +1,36 @@
+{
+  "name": "Docsie MS Auth",
+  "description": "Microsoft Entra ID authentication for Docsie Secure Portals",
+  "repository": "https://github.com/YOUR_USERNAME/docsie-secure-portals-ms-auth",
+  "keywords": ["python", "flask", "microsoft", "authentication"],
+  "env": {
+    "SECRET_KEY": {
+      "description": "A secret key for Flask sessions",
+      "generator": "secret"
+    },
+    "AZURE_AD_CLIENT_ID": {
+      "description": "Your Microsoft Entra Application (client) ID"
+    },
+    "AZURE_AD_CLIENT_SECRET": {
+      "description": "Your Microsoft Entra client secret"
+    },
+    "AZURE_AD_AUTHORITY": {
+      "description": "Your Microsoft Entra authority URL (https://login.microsoftonline.com/<TENANT_GUID>)"
+    },
+    "AZURE_AD_REDIRECT_URI": {
+      "description": "Your application's redirect URI"
+    },
+    "DOCSIE_PORTAL_MASTER_KEY": {
+      "description": "Master key for portal deployment"
+    },
+    "DOCSIE_PORTAL_URL": {
+      "description": "URL of your portal"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  }
+} 

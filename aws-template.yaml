@@ -1,0 +1,79 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Docsie MS Auth deployment template'
+
+Parameters:
+  AzureAdClientId:
+    Type: String
+    Description: Azure AD Client ID
+    NoEcho: false
+
+  AzureAdClientSecret:
+    Type: String
+    Description: Azure AD Client Secret
+    NoEcho: true
+
+  AzureAdAuthority:
+    Type: String
+    Description: Azure AD Authority URL
+    Default: https://login.microsoftonline.com/your_tenant_id
+
+  DocsiePortalMasterKey:
+    Type: String
+    Description: Docsie Portal Master Key
+    NoEcho: true
+
+  DocsiePortalUrl:
+    Type: String
+    Description: Docsie Portal URL
+
+  EnvironmentName:
+    Type: String
+    Description: Environment name
+    Default: Production
+
+Resources:
+  ElasticBeanstalkApplication:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      ApplicationName: !Sub ${AWS::StackName}-app
+      Description: Docsie MS Auth Application
+
+  ElasticBeanstalkConfigurationTemplate:
+    Type: AWS::ElasticBeanstalk::ConfigurationTemplate
+    Properties:
+      ApplicationName: !Ref ElasticBeanstalkApplication
+      SolutionStackName: "64bit Amazon Linux 2 v3.5.9 running Docker"
+      OptionSettings:
+        - Namespace: aws:autoscaling:launchconfiguration
+          OptionName: InstanceType
+          Value: t2.micro
+        - Namespace: aws:autoscaling:asg
+          OptionName: MinSize
+          Value: '1'
+        - Namespace: aws:autoscaling:asg
+          OptionName: MaxSize
+          Value: '2'
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AZURE_AD_CLIENT_ID
+          Value: !Ref AzureAdClientId
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AZURE_AD_CLIENT_SECRET
+          Value: !Ref AzureAdClientSecret
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: AZURE_AD_AUTHORITY
+          Value: !Ref AzureAdAuthority
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DOCSIE_PORTAL_MASTER_KEY
+          Value: !Ref DocsiePortalMasterKey
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: DOCSIE_PORTAL_URL
+          Value: !Ref DocsiePortalUrl
+        - Namespace: aws:elasticbeanstalk:application:environment
+          OptionName: SECRET_KEY
+          Value: !Sub '${AWS::StackName}-${AWS::Region}-${AWS::AccountId}'
+
+  ElasticBeanstalkEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      ApplicationName: !Ref ElasticBeanstalkApplication
+      EnvironmentName: !Sub ${AWS::StackName}-${EnvironmentName} 

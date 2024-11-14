@@ -1,0 +1,1 @@
+web: gunicorn main:app --preload -w ${WEB_CONCURRENCY:-4} -k gevent 

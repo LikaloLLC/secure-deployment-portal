@@ -1,0 +1,121 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "webAppName": {
+            "type": "string",
+            "defaultValue": "[concat('docsie-auth-', uniqueString(resourceGroup().id))]",
+            "metadata": {
+                "description": "Web app name."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "sku": {
+            "type": "string",
+            "defaultValue": "B1",
+            "metadata": {
+                "description": "The SKU of App Service Plan."
+            }
+        },
+        "azureAdClientId": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure AD Client ID"
+            }
+        },
+        "azureAdClientSecret": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Azure AD Client Secret"
+            }
+        },
+        "azureAdAuthority": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure AD Authority URL"
+            }
+        },
+        "docsiePortalMasterKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Docsie Portal Master Key"
+            }
+        },
+        "docsiePortalUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Docsie Portal URL"
+            }
+        }
+    },
+    "variables": {
+        "appServicePlanName": "[concat('ASP-', parameters('webAppName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2021-02-01",
+            "name": "[variables('appServicePlanName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('sku')]"
+            },
+            "kind": "linux",
+            "properties": {
+                "reserved": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2021-02-01",
+            "name": "[parameters('webAppName')]",
+            "location": "[parameters('location')]",
+            "kind": "app,linux,container",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+            ],
+            "properties": {
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "siteConfig": {
+                    "linuxFxVersion": "DOCKER|YOUR_DOCKER_IMAGE:latest",
+                    "appSettings": [
+                        {
+                            "name": "AZURE_AD_CLIENT_ID",
+                            "value": "[parameters('azureAdClientId')]"
+                        },
+                        {
+                            "name": "AZURE_AD_CLIENT_SECRET",
+                            "value": "[parameters('azureAdClientSecret')]"
+                        },
+                        {
+                            "name": "AZURE_AD_AUTHORITY",
+                            "value": "[parameters('azureAdAuthority')]"
+                        },
+                        {
+                            "name": "AZURE_AD_REDIRECT_URI",
+                            "value": "[concat('https://', parameters('webAppName'), '.azurewebsites.net/auth/redirect')]"
+                        },
+                        {
+                            "name": "DOCSIE_PORTAL_MASTER_KEY",
+                            "value": "[parameters('docsiePortalMasterKey')]"
+                        },
+                        {
+                            "name": "DOCSIE_PORTAL_URL",
+                            "value": "[parameters('docsiePortalUrl')]"
+                        },
+                        {
+                            "name": "SECRET_KEY",
+                            "value": "[guid(resourceGroup().id)]"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+} 
