@@ -14,12 +14,13 @@ Microsoft Authentication for Docsie Secure Portals enables organizations to secu
 ```mermaid
 sequenceDiagram
     User->>Portal: Attempts to access Docsie portal
-    Portal->>Microsoft: Redirects to Microsoft login
+    Portal->>Your Backend: Redirects to SSO endpoint
+    Your Backend->>Microsoft: Redirects to Microsoft login
     Microsoft->>User: Presents login page
     User->>Microsoft: Enters credentials
-    Microsoft->>Portal: Validates credentials
-    Portal->>Docsie: Generates secure JWT
-    Portal->>User: Grants access to documentation
+    Microsoft->>Your Backend: Validates credentials
+    Your Backend->>Docsie: Generates secure JWT
+    Docsie->>User: Grants access to documentation
 ```
 
 ## Setup Instructions
