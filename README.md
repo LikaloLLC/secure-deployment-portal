@@ -14,13 +14,14 @@ This application provides Single Sign-On (SSO) authentication for Docsie secured
 ## Authentication Flow
 ```mermaid
 sequenceDiagram
-    User->>Flask App: Visits application
-    Flask App->>Azure AD: Redirects to Microsoft login
-    Azure AD->>User: Shows login page
-    User->>Azure AD: Authenticates
-    Azure AD->>Flask App: Returns with auth token
-    Flask App->>Docsie Portal: Generates JWT using portal master key
-    Flask App->>User: Redirects to portal URL with JWT
+    User->>Portal: Attempts to access Docsie portal
+    Portal->>Your Backend: Redirects to SSO endpoint
+    Your Backend->>Microsoft: Redirects to Microsoft login
+    Microsoft->>User: Presents login page
+    User->>Microsoft: Enters credentials
+    Microsoft->>Your Backend: Validates credentials
+    Your Backend->>Docsie: Generates secure JWT
+    Docsie->>User: Grants access to documentation
 ```
 
 ## Key Components
