@@ -1,9 +1,48 @@
+# Docsie Secure Portals with Microsoft Authentication
+
+This application provides Single Sign-On (SSO) authentication for Docsie secured portals using Microsoft  Azure AD (Entra ID).
+
+## Initial Setup
+- The application is configured with Azure AD (Microsoft Entra ID) credentials
+- A Docsie portal master key and portal URL are required
+- The application uses Flask as the web framework
+
+## Authentication Flow
+```mermaid
+sequenceDiagram
+    User->>Flask App: Visits application
+    Flask App->>Azure AD: Redirects to Microsoft login
+    Azure AD->>User: Shows login page
+    User->>Azure AD: Authenticates
+    Azure AD->>Flask App: Returns with auth token
+    Flask App->>Docsie Portal: Generates JWT using portal master key
+    Flask App->>User: Redirects to portal URL with JWT
+```
+
+## Key Components
+- **Azure AD Authentication**: Handled by the Auth middleware from identity.flask
+- **JWT Generation**: A simple JWT is created using the portal master key
+- **URL Handling**: The application appends the JWT as a query parameter to the portal URL
+
+## Security Measures
+- All routes are protected with `@auth.login_required()`
+- Environment variables are required for sensitive credentials
+- HTTPS proxy support is enabled for production environments
+- Gevent is used for production deployments
+
+This creates a secure flow where:
+1. Users must authenticate through Microsoft
+2. Only authenticated users can access the portal
+3. The portal validates the JWT that was signed with the master key
+4. No sensitive credentials are exposed to the end user
+
+The system acts as a secure bridge between Microsoft's authentication and Docsie's portal access control.
+
 # Installation
 
 ## Quick Deploy
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FYOUR_USERNAME%2FYOUR_REPO%2Fmain%2Fazuredeploy.json)
-
 
 ## Step 1: Register your application
 1. Sign in to the [Microsoft Entra admin center](https://entra.microsoft.com/) as at least a Cloud Application Administrator.
