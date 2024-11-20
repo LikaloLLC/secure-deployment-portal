@@ -1,6 +1,10 @@
 # Docsie Secure Portals with Microsoft Authentication
-
 This application provides Single Sign-On (SSO) authentication for Docsie secured portals using Microsoft  Azure AD (Entra ID).
+
+## Quick Deploy
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FLikaloLLC%2Fsecure-deployment-portal%2Fmain%2Fazuredeploy.json)
+
 
 ## Initial Setup
 - The application is configured with Azure AD (Microsoft Entra ID) credentials
@@ -39,11 +43,6 @@ This creates a secure flow where:
 The system acts as a secure bridge between Microsoft's authentication and Docsie's portal access control.
 
 # Installation
-
-## Quick Deploy
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FYOUR_USERNAME%2FYOUR_REPO%2Fmain%2Fazuredeploy.json)
-
 ## Step 1: Register your application
 1. Sign in to the [Microsoft Entra admin center](https://entra.microsoft.com/) as at least a Cloud Application Administrator.
 2. If you have access to multiple tenants, use the **Settings** icon in the top menu to switch to the tenant in which you want to register the application from the **Directories + subscriptions** menu.
