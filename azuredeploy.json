@@ -18,9 +18,20 @@
         },
         "sku": {
             "type": "string",
-            "defaultValue": "B1",
+            "defaultValue": "P1v2",
+            "allowedValues": [
+                "B1",
+                "B2",
+                "B3",
+                "S1",
+                "S2",
+                "S3",
+                "P1v2",
+                "P2v2",
+                "P3v2"
+            ],
             "metadata": {
-                "description": "The SKU of App Service Plan."
+                "description": "The SKU of App Service Plan. Choose P1v2 or higher for better deployment performance. You can scale down to B1 after successful deployment."
             }
         },
         "azureAdClientId": {
@@ -85,6 +96,18 @@
                 "siteConfig": {
                     "linuxFxVersion": "DOCKER|docker.io/docsie/secure-portal:latest",
                     "appSettings": [
+                        {
+                            "name": "WEBSITES_CONTAINER_START_TIME_LIMIT",
+                            "value": "600"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_URL",
+                            "value": "https://docker.io"
+                        },
+                        {
+                            "name": "DOCKER_ENABLE_CI",
+                            "value": "true"
+                        },
                         {
                             "name": "AZURE_AD_CLIENT_ID",
                             "value": "[parameters('azureAdClientId')]"
