@@ -4,17 +4,24 @@
     "parameters": {
         "webAppName": {
             "type": "string",
-            "defaultValue": "[concat('docsie-auth-', uniqueString(resourceGroup().id))]",
             "minLength": 2,
             "metadata": {
-                "description": "Web app name."
+                "description": "Enter a unique name for your web app (e.g., docsie-auth-mycompany)"
             }
         },
         "location": {
             "type": "string",
-            "defaultValue": "[resourceGroup().location]",
+            "defaultValue": "eastus",
+            "allowedValues": [
+                "eastus",
+                "westus",
+                "westus2",
+                "eastus2",
+                "northeurope",
+                "westeurope"
+            ],
             "metadata": {
-                "description": "Location for all resources."
+                "description": "Select the Azure region to deploy your resources"
             }
         },
         "sku": {
