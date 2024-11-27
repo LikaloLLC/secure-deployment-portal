@@ -14,7 +14,8 @@ LABEL org.opencontainers.image.vendor="Docise Inc." \
 
 # Copy only necessary files from builder
 COPY --from=builder /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
-COPY app bin ./
+COPY app ./app
+COPY entrypoint.sh /entrypoint.sh
 
 ENV PYTHONUNBUFFERED 1
 ENV FLASK_ENV=production
@@ -37,9 +38,9 @@ RUN apk add --no-cache gcc musl-dev python3-dev linux-headers && \
     safety check --policy-file safety-policy.yml || true && \
     apk del gcc musl-dev python3-dev linux-headers
 
-# Copy entrypoint to root and set permissions
-COPY app bin ./
-RUN chmod +x /entrypoint.sh && \
+# Set entrypoint permissions
+RUN sed -i 's/\r//g' /entrypoint.sh && \
+    chmod +x /entrypoint.sh && \
     chown -R appuser:appgroup /entrypoint.sh
 
 USER appuser
@@ -50,5 +51,3 @@ ENTRYPOINT ["sh", "/entrypoint.sh"]
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:5000/health || exit 1
-
-
