@@ -5,6 +5,7 @@
         "webAppName": {
             "type": "string",
             "defaultValue": "[concat('docsie-auth-', uniqueString(resourceGroup().id))]",
+            "minLength": 2,
             "metadata": {
                 "description": "Web app name."
             }
@@ -36,37 +37,44 @@
         },
         "azureAdClientId": {
             "type": "string",
+            "minLength": 36,
+            "maxLength": 36,
             "metadata": {
-                "description": "Azure AD Client ID"
+                "description": "Azure AD Client ID (Application ID)"
             }
         },
         "azureAdClientSecret": {
             "type": "securestring",
+            "minLength": 1,
             "metadata": {
                 "description": "Azure AD Client Secret"
             }
         },
         "azureAdAuthority": {
             "type": "string",
+            "minLength": 1,
             "metadata": {
-                "description": "Azure AD Authority URL"
+                "description": "Azure AD Authority URL (e.g., https://login.microsoftonline.com/your-tenant-id)"
             }
         },
         "docsiePortalMasterKey": {
             "type": "securestring",
+            "minLength": 1,
             "metadata": {
                 "description": "Docsie Portal Master Key"
             }
         },
         "docsiePortalUrl": {
             "type": "string",
+            "minLength": 1,
             "metadata": {
-                "description": "Docsie Portal URL"
+                "description": "Docsie Portal URL (e.g., https://your-portal.docsie.io)"
             }
         }
     },
     "variables": {
-        "appServicePlanName": "[concat('ASP-', parameters('webAppName'))]"
+        "appServicePlanName": "[concat('ASP-', parameters('webAppName'))]",
+        "websiteName": "[parameters('webAppName')]"
     },
     "resources": [
         {
@@ -85,7 +93,7 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2021-02-01",
-            "name": "[parameters('webAppName')]",
+            "name": "[variables('websiteName')]",
             "location": "[parameters('location')]",
             "kind": "app,linux,container",
             "dependsOn": [
@@ -95,10 +103,18 @@
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
                 "siteConfig": {
                     "linuxFxVersion": "DOCKER|docker.io/docsie/secure-portal:latest",
+                    "alwaysOn": true,
+                    "ftpsState": "Disabled",
+                    "http20Enabled": true,
+                    "minTlsVersion": "1.2",
                     "appSettings": [
                         {
                             "name": "WEBSITES_CONTAINER_START_TIME_LIMIT",
-                            "value": "600"
+                            "value": "1800"
+                        },
+                        {
+                            "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                            "value": "true"
                         },
                         {
                             "name": "DOCKER_REGISTRY_SERVER_URL",
@@ -107,6 +123,10 @@
                         {
                             "name": "DOCKER_ENABLE_CI",
                             "value": "true"
+                        },
+                        {
+                            "name": "WEBSITE_HTTPLOGGING_RETENTION_DAYS",
+                            "value": "1"
                         },
                         {
                             "name": "AZURE_AD_CLIENT_ID",
@@ -122,7 +142,7 @@
                         },
                         {
                             "name": "AZURE_AD_REDIRECT_URI",
-                            "value": "[concat('https://', parameters('webAppName'), '.azurewebsites.net/auth/redirect')]"
+                            "value": "[concat('https://', variables('websiteName'), '.azurewebsites.net/auth/redirect')]"
                         },
                         {
                             "name": "DOCSIE_PORTAL_MASTER_KEY",
@@ -140,5 +160,11 @@
                 }
             }
         }
-    ]
-} 
+    ],
+    "outputs": {
+        "webAppUrl": {
+            "type": "string",
+            "value": "[concat('https://', variables('websiteName'), '.azurewebsites.net')]"
+        }
+    }
+}
