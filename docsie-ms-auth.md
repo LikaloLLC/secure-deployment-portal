@@ -103,7 +103,19 @@ sequenceDiagram
    - Verify portal master key
    - Check user permissions in Azure AD
 
-3. **Redirect Errors**
+3. **Redirect URI Mismatch Error (AADSTS50011)**
+   - This error occurs when the redirect URI in your request doesn't match the ones configured in Azure AD
+   - To fix this:
+     1. Go to Azure Portal → Azure Active Directory → App Registrations
+     2. Find your application
+     3. Go to "Authentication" in the left menu
+     4. Under "Redirect URIs", ensure these URIs are added:
+        - `https://your-app-name.azurewebsites.net/redirect`
+        - Your portal's domain (e.g., `https://secureportal.docsie.io`)
+     5. Save the changes
+   - Note: If you've deployed to a different domain, make sure to add that domain to the redirect URIs list
+
+4. **Redirect Errors**
    - Validate all URLs are properly configured
    - Ensure SSL certificates are valid
    - Check for any proxy configuration issues

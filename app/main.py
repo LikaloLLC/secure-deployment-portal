@@ -11,6 +11,7 @@ import jwt
 from flask import Flask, redirect
 from identity.flask import Auth
 from werkzeug.middleware.proxy_fix import ProxyFix
+from flask_session import Session
 
 __version__ = '0.1.0'
 
@@ -30,6 +31,10 @@ assert app.config.get('PORTAL_MASTER_KEY'), '`DOCSIE_PORTAL_MASTER_KEY` environm
 assert app.config.get('PORTAL_URL'), '`DOCSIE_PORTAL_URL` environment variable is required.'
 
 app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_FILE_DIR'] = os.getenv('FLASK_SESSION_DIR', '/app/session')
+os.makedirs(app.config['SESSION_FILE_DIR'], exist_ok=True)
+
+Session(app)
 
 # Auth
 auth = Auth(

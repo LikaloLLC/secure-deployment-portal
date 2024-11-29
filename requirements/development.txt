@@ -3,3 +3,4 @@ werkzeug>=2
 identity[flask]>=0.9,<1
 python-dotenv<0.22
 pyjwt>=2,<3
+Flask-Session>=0.5.0

@@ -155,6 +155,22 @@
                         {
                             "name": "SECRET_KEY",
                             "value": "[guid(resourceGroup().id)]"
+                        },
+                        {
+                            "name": "DIAGNOSTICS_AZUREBLOBCONTAINERSASURL",
+                            "value": ""
+                        },
+                        {
+                            "name": "DIAGNOSTICS_AZUREBLOBRETENTIONINDAYS",
+                            "value": "7"
+                        },
+                        {
+                            "name": "DOCKER_CUSTOM_IMAGE_NAME",
+                            "value": "docker.io/docsie/secure-portal:latest"
+                        },
+                        {
+                            "name": "GUNICORN_CMD_ARGS",
+                            "value": "--log-level debug --error-logfile /dev/stdout --access-logfile /dev/stdout --capture-output"
                         }
                     ]
                 }
