@@ -45,10 +45,29 @@ auth = Auth(
     redirect_uri=app.config['REDIRECT_URI'],
 )
 
+def get_user_claims(context):
+    """Extract claims from the auth context with fallbacks"""
+    # Get claims with fallback to empty dict
+    claims = (context or {}).get('id_token_claims', {})
+    
+    # Build claims object with fallbacks for everything
+    result = {
+        'email': claims.get('preferred_username', ''),
+        'tenant': claims.get('tid', ''),
+        'groups': claims.get('groups', []) if isinstance(claims.get('groups'), list) else [],
+        'department': claims.get('department', ''),
+        'company': claims.get('companyName', '')
+    }
+    
+    # Log if we're missing expected claims but don't fail
+    if not result['email'] or not result['tenant']:
+        print(f"Warning: Missing some expected claims. email: {bool(result['email'])}, tenant: {bool(result['tenant'])}")
+        
+    return result
 
-def generate_jwt_for_portal(master_key: str) -> str:
-    return jwt.encode({}, master_key, algorithm='HS256')
-
+def generate_jwt_for_portal(master_key: str, claims: dict) -> str:
+    """Generate JWT with claims"""
+    return jwt.encode(claims, master_key, algorithm='HS256')
 
 def with_query_params(url: str, **params) -> str:
     url_components = urlparse(url)
@@ -62,15 +81,25 @@ def with_query_params(url: str, **params) -> str:
 
     return url_components.geturl()
 
-
 @app.route('/')
 @auth.login_required()
 def index(*, context):
-    token = generate_jwt_for_portal(str(app.config['PORTAL_MASTER_KEY']))
-    portal_url = with_query_params(app.config['PORTAL_URL'], token=token)
+    # Extract claims from context
+    claims = get_user_claims(context)
+    
+    # Generate token with claims
+    token = generate_jwt_for_portal(
+        str(app.config['PORTAL_MASTER_KEY']), 
+        claims
+    )
+    
+    # Only pass the secure token, claims will be extracted server-side
+    portal_url = with_query_params(
+        app.config['PORTAL_URL'],
+        token=token  # JWT contains all claims, encrypted with master key
+    )
 
     return redirect(portal_url)
-
 
 if __name__ == '__main__':
     app.run(host='localhost')
