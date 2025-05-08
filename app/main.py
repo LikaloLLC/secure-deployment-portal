@@ -45,7 +45,7 @@ if os.getenv('FLASK_ENV') == 'production':
 from urllib.parse import parse_qs, urlencode, urlparse
 
 import jwt
-from flask import Flask, redirect
+from flask import Flask, redirect, request
 from identity.flask import Auth
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_session import Session
@@ -232,14 +232,22 @@ def index(*, context):
         except Exception as e:
             logger.error("Error decoding JWT: %s", str(e))
         
-        # Generate portal URL
-        portal_url = with_query_params(
-            app.config['PORTAL_URL'],
-            token=token
-        )
-        logger.info("Redirecting to portal: %s", portal_url)
+        # Check if there's a return URL in the query parameters
+        return_url = request.args.get('return')
         
-        return redirect(portal_url)
+        if return_url:
+            # If return URL exists, append token to it and redirect there
+            redirect_url = with_query_params(return_url, token=token)
+            logger.info("Redirecting to return URL: %s", redirect_url)
+            return redirect(redirect_url)
+        else:
+            # Otherwise use the default portal URL
+            portal_url = with_query_params(
+                app.config['PORTAL_URL'],
+                token=token
+            )
+            logger.info("Redirecting to portal: %s", portal_url)
+            return redirect(portal_url)
         
     except Exception as e:
         logger.error("Error in index route: %s", str(e), exc_info=True)
