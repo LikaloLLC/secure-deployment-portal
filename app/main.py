@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 # Configure logging first
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=getattr(logging, os.getenv('ENV_LOG_LEVEL', 'info').upper(), logging.INFO),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout)
@@ -131,8 +131,8 @@ def get_user_claims(context):
     id_token_claims = context.get('id_token_claims', {}) if context else {}
     user_info = context.get('user', {}) if context else {}
     
-    logger.info("ID token claims: %s", id_token_claims)
-    logger.info("User info: %s", user_info)
+    logger.debug("ID token claims: %s", id_token_claims)
+    logger.debug("User info: %s", user_info)
     
     # Try to get email from various possible claims
     email = (
@@ -163,7 +163,7 @@ def get_user_claims(context):
         'oid': id_token_claims.get('oid', '') or user_info.get('oid', '')
     }
     
-    logger.info("Final processed claims: %s", result)
+    logger.debug("Final processed claims: %s", result)
     return result
 
 def generate_jwt_for_portal(master_key: str, claims: dict) -> str:
@@ -177,7 +177,7 @@ def generate_jwt_for_portal(master_key: str, claims: dict) -> str:
         'exp': int((datetime.utcnow() + timedelta(minutes=app.config['TOKEN_EXPIRY_MINUTES'])).timestamp())
     }
     
-    logger.info("Generating JWT with payload: %s", payload)
+    logger.debug("Generating JWT with payload: %s", payload)
     return jwt.encode(payload, master_key, algorithm='HS256')
 
 def with_query_params(url: str, **params) -> str:
@@ -199,25 +199,25 @@ def index(*, context):
         logger.info("Processing request with context")
         logger.info("Raw context type: %s", type(context))
         logger.info("Raw context keys: %s", context.keys() if context else None)
-        logger.info("Raw context content: %s", context)
+        logger.debug("Raw context content: %s", context)
 
         # Get user information directly
         try:
             user = auth.get_user()
-            logger.info("User info from auth.get_user(): %s", user)
+            logger.debug("User info from auth.get_user(): %s", user)
         except Exception as e:
             logger.error("Error getting user info: %s", str(e))
 
         # Try to get claims directly from the token
         try:
             token = context.get('id_token_claims', {})
-            logger.info("Direct token claims: %s", token)
+            logger.debug("Direct token claims: %s", token)
         except Exception as e:
             logger.error("Error accessing token claims: %s", str(e))
         
         # Extract claims from context
         claims = get_user_claims(context)
-        logger.info("Final processed claims: %s", claims)
+        logger.debug("Final processed claims: %s", claims)
         
         # Generate token
         token = generate_jwt_for_portal(
@@ -228,7 +228,7 @@ def index(*, context):
         # Log the final token contents
         try:
             decoded = jwt.decode(token, str(app.config['PORTAL_MASTER_KEY']), algorithms=['HS256'])
-            logger.info("Final JWT contents: %s", decoded)
+            logger.debug("Final JWT contents: %s", decoded)
         except Exception as e:
             logger.error("Error decoding JWT: %s", str(e))
         
@@ -238,7 +238,7 @@ def index(*, context):
         if return_url:
             # If return URL exists, append token to it and redirect there
             redirect_url = with_query_params(return_url, token=token)
-            logger.info("Redirecting to return URL: %s", redirect_url)
+            logger.debug("Redirecting to return URL: %s", redirect_url)
             return redirect(redirect_url)
         else:
             # Otherwise use the default portal URL
@@ -246,7 +246,7 @@ def index(*, context):
                 app.config['PORTAL_URL'],
                 token=token
             )
-            logger.info("Redirecting to portal: %s", portal_url)
+            logger.debug("Redirecting to portal: %s", portal_url)
             return redirect(portal_url)
         
     except Exception as e:
